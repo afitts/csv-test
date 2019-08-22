@@ -4,11 +4,23 @@ version := "0.1"
 
 scalaVersion := "2.11.12"
 
-libraryDependencies += "org.apache.storm" % "storm-core" % "1.2.2" % "compile"
+libraryDependencies ++= Seq(
+  "org.apache.storm"          %  "storm-core"         % "1.2.2"            % "compile",
+  "org.apache.storm"          %  "storm-kafka-client" % "1.2.2"            % "compile",
+  "org.scalatest"             %% "scalatest"          % "2.2.6"            % "test",
+  "com.github.tototoshi"      %% "scala-csv"          % "1.3.6",
+  "org.apache.httpcomponents" %  "httpclient"         % "4.5.9"            % "compile",
+  "org.apache.kafka"          %% "kafka"              % "2.2.0" % Compile,
+  "org.apache.kafka"          %  "kafka-clients"      % "2.2.0" % Compile
+)
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+//libraryDependencies += "org.apache.storm" % "storm-core" % "1.2.2" % "compile"
 
-libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.6"
+//libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+
+//libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.6"
+
+//libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.9" % "compile"
 
 scalacOptions ++= Seq("-feature", "-deprecation", "-Yresolve-term-conflict:package")
 

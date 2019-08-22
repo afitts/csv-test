@@ -1,0 +1,89 @@
+{
+      "type": "kafka",
+      "dataSchema": {
+        "dataSource": "dns",
+        "parser": {
+          "type": "string",
+          "parseSpec": {
+          "format": "json",
+          "timestampSpec": {
+            "column": "ts",
+            "format": "posix"
+      },
+        "dimensionsSpec": {
+          "dimensions": [
+          "AA",
+          "RA",
+          "RD",
+          "TC",
+          "TTLs",
+          "answers",
+          "dst",
+          "proto",
+          "qclass_name",
+          "qtype_name",
+          "query",
+          "rcode_name",
+          "rejected",
+          "src",
+          "uid"
+          ]
+        }
+        }
+        },
+          "metricsSpec": [
+        {
+          "name": "count",
+          "type": "count"
+        },
+        {
+          "name": "sum_Z",
+          "type": "longSum",
+          "fieldName": "Z"
+        },
+        {
+          "name": "sum_dport",
+          "type": "longSum",
+          "fieldName": "dport"
+        },
+        {
+          "name": "sum_qclass",
+          "type": "longSum",
+          "fieldName": "qclass"
+        },
+        {
+          "name": "sum_qtype",
+          "type": "longSum",
+          "fieldName": "qtype"
+        },
+        {
+          "name": "sum_rcode",
+          "type": "longSum",
+          "fieldName": "rcode"
+        },
+        {
+          "name": "sum_sport",
+          "type": "longSum",
+          "fieldName": "sport"
+        },
+        {
+          "name": "sum_trans_id",
+          "type": "longSum",
+          "fieldName": "trans_id"
+        }
+          ]
+        },
+      "tuningConfig": {
+        "type": "kafka",
+        "reportParseExceptions": false
+      },
+      "ioConfig": {
+        "topic": "dns",
+        "replicas": 1,
+        "taskDuration": "PT10M",
+        "completionTimeout": "PT20M",
+        "consumerProperties": {
+        "bootstrap.servers": "localhost:9092"
+      }
+   }
+}

@@ -1,0 +1,96 @@
+{
+  "type": "index_parallel",
+  "spec": { 
+  "dataSchema": {
+    "dataSource": "dns",
+    "granularitySpec": {
+      "type": "uniform",
+      "segmentGranularity": "DAY",
+      "queryGranularity": "HOUR",
+      "rollup": true
+    },
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+	"format": "csv",
+	"timestampSpec": {
+	  "column": "ts",
+	  "format": "posix"
+	},
+	"hasHeaderRow": true,
+	"dimensionsSpec": {
+	  "dimensions": [
+	    "AA",
+	    "RA",
+	    "RD",
+	    "TC",
+	    "TTLs",
+	    "answers",
+	    "dst",
+	    "proto",
+	    "qclass_name",
+	    "qtype_name",
+	    "query",
+	    "rcode_name",
+	    "rejected",
+	    "src",
+	    "uid"
+	  ]
+	}
+      }
+    },
+    "metricsSpec": [
+      {
+	"name": "count",
+	"type": "count"
+      },
+      {
+	"name": "sum_Z",
+	"type": "longSum",
+	"fieldName": "Z"
+      },
+      {
+	"name": "sum_dport",
+	"type": "longSum",
+	"fieldName": "dport"
+      },
+      {
+	"name": "sum_qclass",
+	"type": "longSum",
+	"fieldName": "qclass"
+      },
+      {
+	"name": "sum_qtype",
+	"type": "longSum",
+	"fieldName": "qtype"
+      },
+      {
+	"name": "sum_rcode",
+	"type": "longSum",
+	"fieldName": "rcode"
+      },
+      {
+	"name": "sum_sport",
+	"type": "longSum",
+	"fieldName": "sport"
+      },
+      {
+	"name": "sum_trans_id",
+	"type": "longSum",
+	"fieldName": "trans_id"
+      }
+    ]
+  },
+  "ioConfig": {
+    "type": "index_parallel",
+    "firehose": {
+      "type": "local",
+      "filter": "dns.log",
+      "baseDir": "/Users/afitts/projects/intro-to-storm/bro"
+    }
+  },
+  "tuningConfig": {
+    "type": "index_parallel"
+  }
+}
+}
