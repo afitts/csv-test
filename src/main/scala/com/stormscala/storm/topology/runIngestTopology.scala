@@ -1,10 +1,9 @@
-package com.stormscala
+package com.stormscala.storm.topology
 
-import org.apache.storm.{Config, LocalCluster}
-import org.apache.storm.generated.Bolt
+import com.stormscala.storm.bolt.IngestSpecBolt
+import com.stormscala.storm.spout.CsvSpout
 import org.apache.storm.topology.TopologyBuilder
-import org.apache.storm.tuple.Fields
-import org.apache.storm.utils.Utils.findAndReadConfigFile
+import org.apache.storm.{Config, LocalCluster}
 
 object runIngestTopology {
   def main(args: Array[String]): Unit = {

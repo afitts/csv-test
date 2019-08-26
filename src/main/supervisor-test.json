@@ -1,32 +1,20 @@
 {
       "type": "kafka",
       "dataSchema": {
-        "dataSource": "dns",
+        "dataSource": "sample",
         "parser": {
           "type": "string",
           "parseSpec": {
           "format": "json",
           "timestampSpec": {
             "column": "ts",
-            "format": "posix"
+            "format": "auto"
       },
         "dimensionsSpec": {
           "dimensions": [
-          "AA",
-          "RA",
-          "RD",
-          "TC",
-          "TTLs",
-          "answers",
-          "dst",
-          "proto",
-          "qclass_name",
-          "qtype_name",
-          "query",
-          "rcode_name",
-          "rejected",
-          "src",
-          "uid"
+            "filename",
+            "sensor",
+            "type"
           ]
         }
         }
@@ -35,41 +23,6 @@
         {
           "name": "count",
           "type": "count"
-        },
-        {
-          "name": "sum_Z",
-          "type": "longSum",
-          "fieldName": "Z"
-        },
-        {
-          "name": "sum_dport",
-          "type": "longSum",
-          "fieldName": "dport"
-        },
-        {
-          "name": "sum_qclass",
-          "type": "longSum",
-          "fieldName": "qclass"
-        },
-        {
-          "name": "sum_qtype",
-          "type": "longSum",
-          "fieldName": "qtype"
-        },
-        {
-          "name": "sum_rcode",
-          "type": "longSum",
-          "fieldName": "rcode"
-        },
-        {
-          "name": "sum_sport",
-          "type": "longSum",
-          "fieldName": "sport"
-        },
-        {
-          "name": "sum_trans_id",
-          "type": "longSum",
-          "fieldName": "trans_id"
         }
           ]
         },
@@ -78,12 +31,13 @@
         "reportParseExceptions": false
       },
       "ioConfig": {
-        "topic": "dns",
+        "topic": "sample-storm",
         "replicas": 1,
         "taskDuration": "PT10M",
         "completionTimeout": "PT20M",
         "consumerProperties": {
         "bootstrap.servers": "localhost:9092"
-      }
+      },
+        "useEarliestOffset": true
    }
 }

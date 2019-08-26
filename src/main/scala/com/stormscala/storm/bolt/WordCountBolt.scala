@@ -1,4 +1,4 @@
-package com.stormscala
+package com.stormscala.storm.bolt
 
 import org.apache.storm.topology. {
   BasicOutputCollector,

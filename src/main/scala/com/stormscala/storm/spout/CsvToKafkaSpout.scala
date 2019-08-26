@@ -1,25 +1,22 @@
-package com.stormscala
+package com.stormscala.storm.spout
 
+import java.io._
+import java.util
+import java.util.concurrent.atomic.AtomicLong
+import com.stormscala.common.utilities.JsonConverter
 import org.apache.storm.spout.SpoutOutputCollector
 import org.apache.storm.task.TopologyContext
 import org.apache.storm.topology.OutputFieldsDeclarer
 import org.apache.storm.topology.base.BaseRichSpout
 import org.apache.storm.tuple.{Fields, Values}
-import org.apache.storm.metrics2.reporters.ConsoleStormReporter
-import java.io._
-import java.util
-import java.util.concurrent.atomic.AtomicLong
-
-import com.github.tototoshi.csv._
 import org.slf4j.{Logger, LoggerFactory}
-
-import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 
 /**
  * This spout reads data from a CSV file. It is only suitable for testing in local mode
  */
-class CsvSpout(val fileName: String, val separator: Char, var includesHeaderRow: Boolean) extends BaseRichSpout {
+class CsvToKafkaSpout(val fileName: String, val separator: Char, var includesHeaderRow: Boolean) extends BaseRichSpout {
   var _collector: SpoutOutputCollector = _
   var reader: BufferedReader = _//CSVReader = _
   var linesRead: AtomicLong = _
@@ -48,7 +45,14 @@ class CsvSpout(val fileName: String, val separator: Char, var includesHeaderRow:
         //val a = new Values(line.split(","))
         logger.warn(s"EXXXXXXAAAAAAAAAAAAAAAAAAAAMPLE $line")
         val l: Array[String] = line.split(",")
-        _collector.emit("csv-files",new Values(l(0),l(1),l(2)))
+        val tfields: mutable.LinkedHashMap[String,Any] = mutable.LinkedHashMap[String,Any](
+          "ts"           -> l(0),
+          "type"          -> l(1),
+          "sensor"        -> l(2),
+          "filename"      -> l(3)
+        )
+        val csvAsJson = JsonConverter.toJson(tfields.toMap)
+        _collector.emit("csv-files",new Values("0",csvAsJson))
       }
       else Thread.sleep(1)//.out.println("Finished reading file, " + linesRead.get + " lines read")
     } catch {
@@ -65,6 +69,7 @@ class CsvSpout(val fileName: String, val separator: Char, var includesHeaderRow:
   }
 
   override def declareOutputFields(declarer: OutputFieldsDeclarer): Unit = {
-    declarer.declareStream("csv-files", new Fields("type","sensor","filename"))
+    declarer.declareStream("csv-files", new Fields("key", "data"))
   }
 }
+

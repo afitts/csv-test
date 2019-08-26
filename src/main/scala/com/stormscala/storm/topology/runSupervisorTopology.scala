@@ -1,25 +1,23 @@
-package com.stormscala
+package com.stormscala.storm.topology
 
 import java.io.{BufferedReader, FileReader}
-import java.util.{Properties, UUID}
+import java.util.Properties
 
+import com.stormscala.storm.spout.CsvToKafkaSpout
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.storm.{Config, LocalCluster}
-import org.apache.storm.generated.Bolt
-import org.apache.storm.topology.TopologyBuilder
-import org.apache.storm.tuple.Fields
-import org.apache.storm.utils.Utils.findAndReadConfigFile
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
+import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.storm.kafka.bolt.KafkaBolt
 import org.apache.storm.kafka.bolt.mapper.FieldNameBasedTupleToKafkaMapper
 import org.apache.storm.kafka.bolt.selector.DefaultTopicSelector
+import org.apache.storm.topology.TopologyBuilder
+import org.apache.storm.{Config, LocalCluster}
 
 object runSupervisorTopology {
   def main(args: Array[String]): Unit = {
     val builder = new TopologyBuilder
-    builder.setSpout("CsvSpout", new CsvSpout("/Users/afitts/projects/intro-to-storm/bro/dns.log",
+    builder.setSpout("CsvtoKafkaSpout", new CsvToKafkaSpout("/Users/afitts/projects/intro-to-storm/sample.csv",
       separator = ',', false))
     val fileName = "/Users/afitts/IdeaProjects/csv-test/src/main/supervisor-test.json"
     val reader = new BufferedReader(new FileReader(fileName))
@@ -53,15 +51,15 @@ object runSupervisorTopology {
     kafkaProps.put(ProducerConfig.BUFFER_MEMORY_CONFIG,"268435456")
     kafkaProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG,"snappy")
     kafkaProps.put(ProducerConfig.RETRIES_CONFIG,10:java.lang.Integer)
-    kafkaProps.put(ProducerConfig.CLIENT_ID_CONFIG,s"bro-storm-producer-${UUID.randomUUID().toString}")
+    kafkaProps.put(ProducerConfig.CLIENT_ID_CONFIG,s"storm-producer")//bro-storm-producer-${UUID.randomUUID().toString}")
     kafkaProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringSerializer")
     kafkaProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,"org.apache.kafka.common.serialization.StringSerializer")
 
     val bolt = new KafkaBolt()
       .withProducerProperties(kafkaProps)
-      .withTopicSelector(new DefaultTopicSelector("dns-storm"))
+      .withTopicSelector(new DefaultTopicSelector("sample-storm"))
       .withTupleToKafkaMapper(new FieldNameBasedTupleToKafkaMapper("key", "data"))
-    builder.setBolt("forwardToKafka", bolt, 8).shuffleGrouping("CsvSpout", "csv-files")
+    builder.setBolt("forwardToKafka", bolt, 8).shuffleGrouping("CsvtoKafkaSpout", "csv-files")
 
 
     val conf = new Config()
