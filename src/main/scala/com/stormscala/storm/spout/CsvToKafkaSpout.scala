@@ -23,6 +23,7 @@ class CsvToKafkaSpout(val fileName: String, val separator: Char, var includesHea
   linesRead = new AtomicLong(0)
   val logger: Logger = LoggerFactory.getLogger(classOf[CsvSpout])
   var line: String = _
+  var cols: Array[String] = _
 
   override def open(conf: util.Map[_, _], context: TopologyContext, collector: SpoutOutputCollector): Unit = {
     this._collector = collector
@@ -30,7 +31,10 @@ class CsvToKafkaSpout(val fileName: String, val separator: Char, var includesHea
       reader = new BufferedReader(new FileReader(fileName))
       //reader = CSVReader.open(new File(fileName))
       // read and ignore the header if one exists
-      if (includesHeaderRow) reader.readLine()//readNext()
+      if (includesHeaderRow) {
+        line = reader.readLine()
+        cols = line.split(",")
+      }//readNext()
     } catch {
       case e: Exception =>
         throw new RuntimeException(e)
@@ -39,19 +43,21 @@ class CsvToKafkaSpout(val fileName: String, val separator: Char, var includesHea
 
   override def nextTuple(): Unit = {
     try {
-      val line: String = reader.readLine()//Next().toList.flatten.mkString(",")
+      line = reader.readLine()//Next().toList.flatten.mkString(",")
       if (line != null) {
         val id = linesRead.incrementAndGet
         //val a = new Values(line.split(","))
-        logger.warn(s"EXXXXXXAAAAAAAAAAAAAAAAAAAAMPLE $line")
         val l: Array[String] = line.split(",")
-        val tfields: mutable.LinkedHashMap[String,Any] = mutable.LinkedHashMap[String,Any](
-          "ts"           -> l(0),
-          "type"          -> l(1),
-          "sensor"        -> l(2),
-          "filename"      -> l(3)
-        )
-        val csvAsJson = JsonConverter.toJson(tfields.toMap)
+        val tfields = (cols zip l).toMap
+        logger.warn(s"EXXXXXXAAAAAAAAAAAAAAAAAAAAMPLE $tfields")
+        //val tfields: mutable.LinkedHashMap[String,Any] = mutable.LinkedHashMap[String,Any](
+        //  "ts"           -> l(0),
+        //  "type"          -> l(1),
+        //  "sensor"        -> l(2),
+        //  "filename"      -> l(3)
+        //)
+        //val csvAsJson = JsonConverter.toJson(tfields.toMap)
+        val csvAsJson = JsonConverter.toJson(tfields)
         _collector.emit("csv-files",new Values("0",csvAsJson))
       }
       else Thread.sleep(1)//.out.println("Finished reading file, " + linesRead.get + " lines read")

@@ -1,0 +1,43 @@
+{
+  "type": "kafka",
+  "dataSchema": {
+    "dataSource": "get-requests",
+    "parser": {
+      "type": "string",
+      "parseSpec": {
+        "format": "json",
+        "timestampSpec": {
+          "column": "ts",
+          "format": "auto"
+        },
+        "dimensionsSpec": {
+          "dimensions": [
+            "filename",
+            "sensor",
+            "type"
+          ]
+        }
+      }
+    },
+    "metricsSpec": [
+      {
+        "name": "count",
+        "type": "count"
+      }
+    ]
+  },
+  "tuningConfig": {
+    "type": "kafka",
+    "reportParseExceptions": false
+  },
+  "ioConfig": {
+    "topic": "sample-storm",
+    "replicas": 1,
+    "taskDuration": "PT10M",
+    "completionTimeout": "PT20M",
+    "consumerProperties": {
+      "bootstrap.servers": "localhost:9092"
+    },
+    "useEarliestOffset": true
+  }
+}

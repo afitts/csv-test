@@ -1,27 +1,23 @@
-name := "csv-test"
+name := "storm-metrics"
 
 version := "0.1"
 
 scalaVersion := "2.11.12"
 
 libraryDependencies ++= Seq(
-  "org.apache.storm"          %  "storm-core"         % "1.2.2"            % "provided",
+  "org.apache.storm"          %  "storm-core"         % "1.2.2"            % "compile",
   "org.apache.storm"          %  "storm-kafka-client" % "1.2.2"            % "compile",
   "org.apache.commons"        %  "commons-text"       % "1.6"              % "compile",
   "org.scalatest"             %% "scalatest"          % "2.2.6"            % "test",
   "com.github.tototoshi"      %% "scala-csv"          % "1.3.6",
   "org.apache.httpcomponents" %  "httpclient"         % "4.5.9"            % "compile",
   "org.apache.kafka"          %% "kafka"              % "2.2.0" % Compile,
-  "org.apache.kafka"          %  "kafka-clients"      % "2.2.0" % Compile
+  "org.apache.kafka"          %  "kafka-clients"      % "2.2.0" % Compile,
+  "org.json4s"                %% "json4s-native"      % "3.2.11"           % "compile",
+  "org.json4s"                %% "json4s-jackson"     % "3.2.11"           % "compile",
+  "com.fasterxml.jackson.core" % "jackson-databind"   % "2.10.3"            % "compile",
+  "com.fasterxml.jackson.module" %% "jackson-module-scala"   % "2.10.3"            % "compile"
 )
-
-//libraryDependencies += "org.apache.storm" % "storm-core" % "1.2.2" % "compile"
-
-//libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
-
-//libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.6"
-
-//libraryDependencies += "org.apache.httpcomponents" % "httpclient" % "4.5.9" % "compile"
 
 scalacOptions ++= Seq("-feature", "-deprecation", "-Yresolve-term-conflict:package")
 
